@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Home Automation</title>
+
+	<!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="js/highcharts.js"></script>
+	<script src="js/exporting.js"></script>
+	
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="dashboard.css" rel="stylesheet">
+    <script src="js/ie-emulation-modes-warning.js"></script>
+	<script type="text/javascript" src="js/moment-with-locales.js"></script>
+	
+	<script type="text/javascript">
+		$(function () {
+      var temperatures = [];
+      var humidities = [];
+			var dates = [];			
+			$.getJSON( "http://192.168.178.70:8080/api/homeautomation/measurements", function( json ) {
+				for(i = 0; i < json.length; i++) {
+					var d = moment(json[i].added);
+					
+					if(d.minute() == 30 || d.minute() == 0 || d.minute() == 60) {
+						dates.push(d.format('MMMM Do, H:mm'));
+						temperatures.push(json[i].temperature);
+            humidities.push(json[i].humidity);
+					}
+				}
+						
+				$('#temperatureChart').highcharts({
+				title: {
+					text: 'Average Temperature',
+					x: -20 //center
+				},
+        chart: {
+          animation: false
+        },
+				subtitle: {
+					text: 'Source: Raspberry',
+					x: -20
+				},
+				xAxis: {
+					categories: dates
+				},
+				yAxis: {
+					title: {
+						text: 'Temperature (°C)'
+					},
+					plotLines: [{
+						value: 0,
+						width: 1,
+						color: '#808080'
+					}]
+				},
+				tooltip: {
+					valueSuffix: '°C'
+				},
+				legend: {
+					layout: 'vertical',
+					align: 'right',
+					verticalAlign: 'middle',
+					borderWidth: 0
+				},
+				series: [{
+					name: 'Dachgeschoss',
+					data: temperatures,
+          color: '#CCC56C'
+				}]
+				});
+			
+      $('#humidityChart').highcharts({
+				title: {
+					text: 'Average Humidity',
+					x: -20 //center
+				},
+				subtitle: {
+					text: 'Source: Raspberry',
+					x: -20
+				},
+				xAxis: {
+					categories: dates
+				},
+				yAxis: {
+					title: {
+						text: 'Humidity (%)'
+					},
+					plotLines: [{
+						value: 0,
+						width: 1,
+						color: '#808080'
+					}]
+				},
+				tooltip: {
+					valueSuffix: '%'
+				},
+				legend: {
+					layout: 'vertical',
+					align: 'right',
+					verticalAlign: 'middle',
+					borderWidth: 0
+				},
+				series: [{
+					name: 'Dachgeschoss',
+					data: humidities,
+          color: '#7C99CC'
+				}]
+				});
+        });
+			});
+		</script>
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Home Automation</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">Settings</a></li>
+            <li><a href="#">Profile</a></li>
+            <li><a href="#">Help</a></li>
+          </ul>
+          <form class="navbar-form navbar-right">
+            <input type="text" class="form-control" placeholder="Search...">
+          </form>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
+            <li><a href="#">Reports</a></li>
+            <li><a href="#">Analytics</a></li>
+            <li><a href="#">Export</a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li><a href="">Nav item</a></li>
+            <li><a href="">Nav item again</a></li>
+            <li><a href="">One more nav</a></li>
+            <li><a href="">Another nav item</a></li>
+            <li><a href="">More navigation</a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li><a href="">Nav item again</a></li>
+            <li><a href="">One more nav</a></li>
+            <li><a href="">Another nav item</a></li>
+          </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h1 class="page-header">Dashboard</h1>
+
+          <div class="row placeholders">
+			      <div id="temperatureChart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+            <div id="humidityChart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+	
+	<script>window.jQuery || document.write('<script src="js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="js/bootstrap.min.js"></script>
+    <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+    <script src="js/vendor/holder.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="js/ie10-viewport-bug-workaround.js"></script>
+	
+  </body>
+</html>
