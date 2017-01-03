@@ -33,7 +33,7 @@
       var temperatures = [];
       var humidities = [];
 			var dates = [];			
-			$.getJSON( "http://192.168.178.70:8080/api/homeautomation/measurements", function( json ) {
+			$.getJSON( "http://localhost:8080/api/homeautomation/measurements", function( json ) {
 				for(i = 0; i < json.length; i++) {
 					var d = moment(json[i].added);
 					

@@ -1,0 +1,25 @@
+version: '2'
+
+services:
+   database:
+     image: mysql
+     volumes:
+       - /home/sql_data_docker:/var/lib/mysql
+     environment:
+       - MYSQL_ROOT_PASSWORD=password
+       - MYSQL_USER=root
+       - MYSQL_PASSWORD=password
+     expose:
+       - "3306"
+
+   api:
+     depends_on:
+       - database
+     build: .
+     ports:
+       - "8080:8080"
+     volumes:
+       - /usr/src/app
+     environment:
+       - MYSQL_USER=root
+       - MYSQL_PASSWORD=password

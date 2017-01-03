@@ -3,10 +3,11 @@ var bodyParser = require('body-parser');
 var mysql = require('mysql');
 
 var app = express();
+
 var connection = mysql.createConnection({
-   host: '172.17.0.1',
-   user: 'root',
-   password: 'password' 
+   host: 'database',
+   user: process.env.MYSQL_USER,
+   password: process.env.MYSQL_PASSWORD 
 });
 
 connection.query('CREATE DATABASE IF NOT EXISTS homeautomation', function (err) {
@@ -84,5 +85,5 @@ Date.prototype.toMysqlFormat = function() {
 };
 
 app.listen(8080, function() {
-    console.log("Home Automation API listening on port 8080!")
+    console.log("Home Automation API listening on port 'database:8080'!")
 });
